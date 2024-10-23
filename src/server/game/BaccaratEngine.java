@@ -121,6 +121,7 @@ public class BaccaratEngine implements DataFileDir{
                 bankerCards = bankerCards + cardDrawn.getFaceValue().substring(0, cardDrawn.getFaceValue().length()-2) + "|";
             }
             if (checkScore(player.getHand()) == checkScore(banker.getHand())){
+                player.setDraw(true);
                 retStatement = checkWinner(winner);
             }
             else {
@@ -166,7 +167,7 @@ public class BaccaratEngine implements DataFileDir{
             return retStatement;
         }
     }
-
+// ==========================================================================================
     public void shuffleDeck(Deck deck) throws IOException{
         
         List<Card> cards = deck.getCards();
@@ -185,7 +186,7 @@ public class BaccaratEngine implements DataFileDir{
             }
         }
     }
-
+// ==========================================================================================
     public Card drawCard() throws IOException{
         Queue<Card> cards = new ArrayDeque<>();
         try (FileReader fr = new FileReader(dataFileDir + "cards.db")) {
@@ -213,7 +214,7 @@ public class BaccaratEngine implements DataFileDir{
         }
         return cardDrawn;
     }
-
+// ==========================================================================================
     public int sumHand(List<Card> hand){
 
         int sum = 0;
@@ -224,12 +225,12 @@ public class BaccaratEngine implements DataFileDir{
         }
         return sum;
     }
-
+// ==========================================================================================
     public int checkScore(List<Card> hand){
         int sumHand = sumHand(hand);
         return sumHand%10;
     }
-
+// ==========================================================================================
     public String checkWinner(String winner, Player player){
         int bet = player.getBetAmount();
         if (player.getBet()==winner){
@@ -239,11 +240,11 @@ public class BaccaratEngine implements DataFileDir{
         }
         return "Player loses the bet. Lost "+ bet;
     }
-
+// ==========================================================================================
     public String checkWinner(String winner){
         return "This round is a draw";
     }
-
+// ==========================================================================================
     public boolean checkSixCardRule(){
         int pScore = checkScore(player.getHand());
         int bScore = checkScore(banker.getHand());
@@ -253,7 +254,7 @@ public class BaccaratEngine implements DataFileDir{
         }
         return false;
     }
-
+// ==========================================================================================
     public void updateUserFile(Boolean playerWins) throws IOException{
         String name = player.getName();
         String filePath = dataFileDir + name + ".db";
@@ -281,5 +282,5 @@ public class BaccaratEngine implements DataFileDir{
         br.close();
         fr.close();
     }
-
+// ==========================================================================================
 }

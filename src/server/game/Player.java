@@ -12,6 +12,7 @@ public class Player {
     private boolean winBet = false;
     private int payout;
     private boolean loggedIn = false;
+    private boolean isDraw = false;
 
     public boolean isHasPlacedBet() {
         return hasPlacedBet;
@@ -65,6 +66,12 @@ public class Player {
     }
     public List<Card> getHand() {
         return hand;
+    }
+    public boolean isDraw() {
+        return isDraw;
+    }
+    public void setDraw(boolean isDraw) {
+        this.isDraw = isDraw;
     }
     
     

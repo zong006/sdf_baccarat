@@ -2,6 +2,7 @@ package client;
 
 import java.io.*;
 import java.net.*;
+import java.util.*;
 
 import server.game.DataFileDir;
 
@@ -47,7 +48,8 @@ public class Client implements DataFileDir{
 
             boolean c1 = msgFromGame.contains("lose");
             boolean c2 = msgFromGame.contains("win");
-            if (c1 || c2){
+            boolean c3 = msgFromGame.contains("draw");
+            if (c1 || c2 || c3){
                 writeHistToCSV(msgFromGame);
             }
 
@@ -74,10 +76,23 @@ public class Client implements DataFileDir{
     
         String[] words = msgFromGame.split(" ");
         
-        boolean playerWin = true;
+        Map<String, Boolean> playerGameOutcome = new HashMap<>(){{
+            put("win", false);
+            put("lose", false);
+            put("draw", false);
+        }};
+
         for (String s : words){
-            if (s.equals("loses")){ 
-                playerWin = false;
+            if (s.equals("wins")){ 
+                playerGameOutcome.put("win", true);
+                break;
+            }
+            else if (s.equals("loses")){
+                playerGameOutcome.put("lose", true);
+                break;
+            }
+            else if (s.equals("draws")){
+                playerGameOutcome.put("draw", true);
                 break;
             }
         }
@@ -97,30 +112,29 @@ public class Client implements DataFileDir{
                 else{
                     String[] s = lineRead.split(",");
                     if (s.length<6){
-                        if (playerWin){
-                            bw.write("P,");
-                        }
-                        else {
-                            bw.write("B,");
-                        }
+                        bw.write(gameOutcome(playerGameOutcome));
                         bw.flush();
                         endReading = true;
                     }
                     else {continue;}
                 }
             }
-            
             else {
                 bw.newLine();
-                if (playerWin){
-                    bw.write("P,");
-                }
-                else {
-                    bw.write("B,");
-                }
+                bw.write(gameOutcome(playerGameOutcome));
                 bw.flush();
                 endReading = true;
             }
         }
+    }
+
+    public static String gameOutcome(Map<String, Boolean> playerGameOutcome){
+        if (playerGameOutcome.get("win")){
+            return "P,";
+        }
+        else if (playerGameOutcome.get("lose")){
+            return "B,";
+        }
+        return "D,";
     }
 }
