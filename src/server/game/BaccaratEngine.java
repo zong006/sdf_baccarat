@@ -152,7 +152,7 @@ public class BaccaratEngine implements DataFileDir{
                 }
                 player.setPayout(player.getBetAmount());
             }
-            updateUserFile(player.isWinBet());
+            updateUserFile(player.isWinBet(), player.isDraw());
             shuffleDeck(deck);
             return retStatement;
         }
@@ -255,32 +255,35 @@ public class BaccaratEngine implements DataFileDir{
         return false;
     }
 // ==========================================================================================
-    public void updateUserFile(Boolean playerWins) throws IOException{
-        String name = player.getName();
-        String filePath = dataFileDir + name + ".db";
-        FileReader fr = new FileReader(filePath);
-        BufferedReader br = new BufferedReader(fr);
+    public void updateUserFile(Boolean playerWins, Boolean draw) throws IOException{
+        if (draw) return;
+        else {
+            String name = player.getName();
+            String filePath = dataFileDir + name + ".db";
+            FileReader fr = new FileReader(filePath);
+            BufferedReader br = new BufferedReader(fr);
 
-        String line= "";
-        int newValue = 0;
-        while ((line = br.readLine())!=null){
-            int accountValue = Integer.parseInt(line.trim());
-            if (playerWins){
-                newValue = accountValue + player.getPayout();
+            String line= "";
+            int newValue = 0;
+            while ((line = br.readLine())!=null){
+                int accountValue = Integer.parseInt(line.trim());
+                if (playerWins){
+                    newValue = accountValue + player.getPayout();
+                }
+                else {
+                    newValue = accountValue - player.getBetAmount();
+                }
             }
-            else {
-                newValue = accountValue - player.getBetAmount();
-            }
+
+            FileWriter fw = new FileWriter(filePath);
+            BufferedWriter bw = new BufferedWriter(fw);
+            bw.write(Integer.toString(newValue));
+            bw.flush();
+            bw.close();
+            fw.close();
+            br.close();
+            fr.close();
         }
-
-        FileWriter fw = new FileWriter(filePath);
-        BufferedWriter bw = new BufferedWriter(fw);
-        bw.write(Integer.toString(newValue));
-        bw.flush();
-        bw.close();
-        fw.close();
-        br.close();
-        fr.close();
     }
 // ==========================================================================================
 }
