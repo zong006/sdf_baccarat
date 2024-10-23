@@ -4,14 +4,12 @@ sdf_baccarat/
 ├── data/                          
 │   └── user.db                    
 │   └── game_history.csv
-|
+│
 ├── src/                           
 │   ├── server/                    
-|   |   |
 │   │   ├── handlers/              
-|   |   |   └── Server.java 
+│   │   │   └── Server.java 
 │   │   │   └── ClientHandler.java 
-|   |   |
 │   │   └── game/                 
 │   │       └── BaccaratEngine.java
 │   │       └── Banker.java
@@ -19,8 +17,8 @@ sdf_baccarat/
 │   │       └── DataFileDir.java
 │   │       └── Deck.java
 │   │       └── Player.java
-|   |
-|   └── client/   
+│   └── client/   
 │       └── Client.java                  
 │
 └── README.md          
+       
