@@ -88,7 +88,7 @@ public class BaccaratEngine implements DataFileDir{
     
             List<Card> dealtCards = new ArrayList<>();
 
-            System.out.printf("Player bets %d on %s.\n", player.getBetAmount(), player.getBet());
+            System.out.printf("Player bets %d on %s winning.\n", player.getBetAmount(), player.getBet());
             // first draw 4 cards. deal to player first
 
             for (int i = 0 ; i < 4 ; i++){
@@ -108,6 +108,8 @@ public class BaccaratEngine implements DataFileDir{
             // check the sum for player and banker.
             int pSum = sumHand(player.getHand());
             int bSum = sumHand(banker.getHand());
+            System.out.println("player hand sum: "+ pSum);
+            System.out.println("banker hand sum: "+ bSum);
             if (pSum<=15){
                 Card cardDrawn = drawCard();
                 player.addToHand(cardDrawn);
@@ -152,7 +154,10 @@ public class BaccaratEngine implements DataFileDir{
                 }
                 player.setPayout(player.getBetAmount());
             }
+            // end of each round, update account value, clear player's hands, and shuffle deck
             updateUserFile(player.isWinBet(), player.isDraw());
+            player.getHand().clear();
+            banker.getHand().clear();
             shuffleDeck(deck);
             return retStatement;
         }
