@@ -226,7 +226,13 @@ public class BaccaratEngine implements DataFileDir{
         for (Card card : hand){
             String faceValue = card.getFaceValue();
             faceValue = faceValue.substring(0, faceValue.length()-2);
-            sum += Integer.parseInt(faceValue);
+            int cardValue = Integer.parseInt(faceValue);
+            if (cardValue >10){
+                sum += 10;
+            }
+            else {
+                sum += cardValue;
+            }
         }
         return sum;
     }
