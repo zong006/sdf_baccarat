@@ -81,7 +81,7 @@ public class BaccaratEngine implements DataFileDir{
         else if (command.contains("deal")){
             String[] deal = command.split(" ");
             String playerBet = deal[1];
-            String winner = "";
+            String betterHand = "";
             player.setBet(playerBet);
             String playerCards = "P|";
             String bankerCards = "B|";
@@ -108,8 +108,7 @@ public class BaccaratEngine implements DataFileDir{
             // check the sum for player and banker.
             int pSum = sumHand(player.getHand());
             int bSum = sumHand(banker.getHand());
-            System.out.println("player hand sum: "+ pSum);
-            System.out.println("banker hand sum: "+ bSum);
+            
             if (pSum<=15){
                 Card cardDrawn = drawCard();
                 player.addToHand(cardDrawn);
@@ -124,23 +123,31 @@ public class BaccaratEngine implements DataFileDir{
             }
             if (checkScore(player.getHand()) == checkScore(banker.getHand())){
                 player.setDraw(true);
-                retStatement = checkWinner(winner);
+                retStatement = checkWinnerOfRound();
             }
             else {
                 if (checkScore(player.getHand()) > checkScore(banker.getHand())){
-                    winner = "p";
+                    betterHand = "p";
                     System.out.printf("Total score for player: %d.\n", checkScore(player.getHand()));
                     System.out.printf("Total score for banker: %d.\n", checkScore(banker.getHand()));
                     System.out.printf("Player bet on %s winning. \n", player.getBet());
                 }
                 else if (checkScore(player.getHand()) < checkScore(banker.getHand())){
-                    winner = "b";
+                    betterHand = "b";
                     System.out.printf("Total score for player: %d.\n", checkScore(player.getHand()));
                     System.out.printf("Total score for banker: %d.\n", checkScore(banker.getHand()));
                     System.out.printf("Player bet on %s winning. \n", player.getBet());
                 }
+                System.out.println("player score: "+ checkScore(player.getHand())); // delete later. for debugging
+                System.out.println("banker scre: "+ checkScore(banker.getHand()));  // delete later. for debugging
+                System.out.println(player.getBet());
+                System.out.println(playerBet);
+                System.out.println(playerBet==player.getBet());
+                System.out.println(betterHand.equals(player.getBet()));
+                System.out.println(betterHand);
+
                 retStatement = playerCards + "," + bankerCards;
-                retStatement += "       " + checkWinner(winner, player);
+                retStatement += "       " + checkWinnerOfRound(betterHand, player);
 
                 FileReader fr = new FileReader(dataFileDir + player.getName() + ".db");
                 BufferedReader br = new BufferedReader(fr);
@@ -238,21 +245,22 @@ public class BaccaratEngine implements DataFileDir{
     }
 // ==========================================================================================
     public int checkScore(List<Card> hand){
-        int sumHand = sumHand(hand);
-        return sumHand%10;
+        int score = sumHand(hand)%10;
+        return score;
     }
 // ==========================================================================================
-    public String checkWinner(String winner, Player player){
+    public String checkWinnerOfRound(String betterHand, Player player){
         int bet = player.getBetAmount();
-        if (player.getBet()==winner){
+        if (player.getBet().equals(betterHand)){
             player.setWinBet(true);
             
             return "Player wins the bet. Wins "+bet;
         }
+        player.setWinBet(false);
         return "Player loses the bet. Lost "+ bet;
     }
 // ==========================================================================================
-    public String checkWinner(String winner){
+    public String checkWinnerOfRound(){
         return "This round is a draw";
     }
 // ==========================================================================================
