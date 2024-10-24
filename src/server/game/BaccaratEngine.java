@@ -121,39 +121,23 @@ public class BaccaratEngine implements DataFileDir{
                 System.out.println("Banker draws: " + cardDrawn);
                 bankerCards = bankerCards + cardDrawn.getFaceValue().substring(0, cardDrawn.getFaceValue().length()-2) + "|";
             }
+            retStatement = playerCards + "," + bankerCards;
             if (checkScore(player.getHand()) == checkScore(banker.getHand())){
                 player.setDraw(true);
-                retStatement = checkWinnerOfRound();
+                retStatement += "   " + checkWinnerOfRound();
             }
             else {
                 if (checkScore(player.getHand()) > checkScore(banker.getHand())){
                     betterHand = "p";
-                    System.out.printf("Total score for player: %d.\n", checkScore(player.getHand()));
-                    System.out.printf("Total score for banker: %d.\n", checkScore(banker.getHand()));
-                    System.out.printf("Player bet on %s winning. \n", player.getBet());
                 }
                 else if (checkScore(player.getHand()) < checkScore(banker.getHand())){
                     betterHand = "b";
-                    System.out.printf("Total score for player: %d.\n", checkScore(player.getHand()));
-                    System.out.printf("Total score for banker: %d.\n", checkScore(banker.getHand()));
-                    System.out.printf("Player bet on %s winning. \n", player.getBet());
                 }
-                System.out.println("player score: "+ checkScore(player.getHand())); // delete later. for debugging
-                System.out.println("banker scre: "+ checkScore(banker.getHand()));  // delete later. for debugging
-                System.out.println(player.getBet());
-                System.out.println(playerBet);
-                System.out.println(playerBet==player.getBet());
-                System.out.println(betterHand.equals(player.getBet()));
-                System.out.println(betterHand);
-
-                retStatement = playerCards + "," + bankerCards;
                 retStatement += "       " + checkWinnerOfRound(betterHand, player);
-
-                FileReader fr = new FileReader(dataFileDir + player.getName() + ".db");
-                BufferedReader br = new BufferedReader(fr);
-                String accountValue = br.readLine();
-                retStatement += "    " + "Account value: " + accountValue;
             }
+            System.out.printf("Total score for player: %d.\n", checkScore(player.getHand()));
+            System.out.printf("Total score for banker: %d.\n", checkScore(banker.getHand()));
+            System.out.printf("Player bet on %s winning. \n", player.getBet());
             if (player.isWinBet()){
                 if (checkSixCardRule()){
 
@@ -161,11 +145,13 @@ public class BaccaratEngine implements DataFileDir{
                 }
                 player.setPayout(player.getBetAmount());
             }
-            // end of each round, update account value, clear player's hands, and shuffle deck
             updateUserFile(player.isWinBet(), player.isDraw());
-            player.getHand().clear();
-            banker.getHand().clear();
-            shuffleDeck(deck);
+            FileReader fr = new FileReader(dataFileDir + player.getName() + ".db");
+            BufferedReader br = new BufferedReader(fr);
+            String accountValue = br.readLine();
+            retStatement += "    " + "Account value: " + accountValue;
+
+            resetGame();
             return retStatement;
         }
         else if (command.equals("close")){
@@ -305,4 +291,11 @@ public class BaccaratEngine implements DataFileDir{
         }
     }
 // ==========================================================================================
+    public void resetGame() throws IOException{
+        player.getHand().clear();
+        banker.getHand().clear();
+        player.setDraw(false);
+        player.setWinBet(false);
+        shuffleDeck(deck);
+    }
 }
